@@ -25,3 +25,6 @@ let mySprite2 = sprites.create(img`
     .........c1c............
     .........c1c............
     `, SpriteKind.Player)
+if (true) {
+	
+}

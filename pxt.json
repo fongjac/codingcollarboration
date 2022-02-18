@@ -5,7 +5,12 @@
         "device": "*",
         "controller": "*",
         "animation": "*",
-        "pxt-status-bar": "github:jwunderl/pxt-status-bar#v0.4.1"
+        "pxt-status-bar": "github:jwunderl/pxt-status-bar#v0.4.1",
+        "tilemaps": "github:microsoft/pxt-tilemaps#v1.12.0",
+        "sprite-scaling": "*",
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0",
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0",
+        "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.2.5"
     },
     "files": [
         "main.blocks",
@@ -17,7 +22,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.8.17",
+        "target": "1.8.20",
         "targetId": "arcade"
     },
     "supportedTargets": [

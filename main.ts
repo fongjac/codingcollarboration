@@ -9,7 +9,22 @@ function im_dying () {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (setPokemonScreen) {
-        thePlayer = sprites.readDataString(current_selected_pokemon, "player")
+        thePlayer = sprites.readDataSprite(current_selected_pokemon, "player")
+        thePlayer.setFlag(SpriteFlag.Invisible, false)
+        tiles.placeOnRandomTile(thePlayer, assets.tile`transparency16`)
+        for (let value of sprites.allOfKind(SpriteKind.selectablePokemon)) {
+            value.destroy()
+        }
+        for (let value of sprites.allOfKind(SpriteKind.Background)) {
+            value.destroy()
+        }
+        for (let value of sprites.allOfKind(SpriteKind.Text)) {
+            value.destroy()
+        }
+        controller.moveSprite(thePlayer)
+        setPokemonScreen = false
+    } else {
+        thePlayer.vy = -100
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -152,7 +167,7 @@ let Froakie: Sprite = null
 let allPokemon: Sprite[] = []
 let current_character_index = 0
 let current_selected_pokemon: Sprite = null
-let thePlayer = ""
+let thePlayer: Sprite = null
 let setPokemonScreen = false
 let smallFennekin: Sprite = null
 let smallChespin: Sprite = null

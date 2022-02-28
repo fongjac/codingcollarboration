@@ -1,16 +1,59 @@
 namespace SpriteKind {
     export const selectablePokemon = SpriteKind.create()
     export const Background = SpriteKind.create()
+    export const yveltalBoss = SpriteKind.create()
+    export const energyBeam = SpriteKind.create()
+}
+let list: number[] = []
+function yveltalBoss2 () {
+    energyBeam = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    energyBeam.setPosition(76, 0)
+    energyBeam.vx = -20
+    yveltalHead = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.yveltalBoss)
 }
 function im_dying () {
     if (!(setPokemonScreen)) {
         characterSelect()
     }
 }
+// Destroys the character selection screen, allowing the Player to move.
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (setPokemonScreen) {
         thePlayer = sprites.readDataSprite(current_selected_pokemon, "player")
-        thePlayer.setFlag(SpriteFlag.Invisible, false)
         tiles.placeOnRandomTile(thePlayer, assets.tile`transparency16`)
         for (let value of sprites.allOfKind(SpriteKind.selectablePokemon)) {
             value.destroy()
@@ -21,10 +64,8 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         for (let value of sprites.allOfKind(SpriteKind.Text)) {
             value.destroy()
         }
-        controller.moveSprite(thePlayer)
+        controller.moveSprite(thePlayer, 100, 0)
         setPokemonScreen = false
-    } else {
-        thePlayer.vy = -100
     }
 })
 function yveltalBoss () {
@@ -137,12 +178,15 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         current_character_index = (current_character_index + (allPokemon.length - 1)) % allPokemon.length
     }
 })
+function setYveltalHeadPosition () {
+    yveltalHead.setPosition(energyBeam.x - energyBeam.y, 0)
+}
 function characterSelect () {
     scene.centerCameraAt(80, 60)
     for (let value of sprites.allOfKind(SpriteKind.Player)) {
         let gravity2 = 0
         value.ay = gravity2
-        value.setFlag(SpriteFlag.Invisible, false)
+        value.setFlag(SpriteFlag.Invisible, true)
     }
     setPokemonScreen = true
     Froakie = sprites.create(img`
@@ -263,6 +307,37 @@ spriteutils.createRenderable(100, function (screen2) {
         screen2.fill(1)
     }
     current_selected_pokemon = allPokemon[current_character_index]
+    current_selector_box.setPosition(current_selected_pokemon.x, current_selected_pokemon.y)
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    energyBeam = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.energyBeam)
+    energyBeam.y = randint(0, scene.screenHeight() - 50)
+    current_selected_pokemon.destroy()
+    if (Math.percentChance(50)) {
+        energyBeam.left = scene.screenWidth()
+        energyBeam.ax = -200
+    } else {
+        energyBeam.image.flipX()
+        energyBeam.right = 0
+        energyBeam.ax = 200
+    }
 })
 let current_selector_box: Sprite = null
 let Chespin: Sprite = null
@@ -275,6 +350,8 @@ let yveltalBoss2: Sprite = null
 let current_selected_pokemon: Sprite = null
 let thePlayer: Sprite = null
 let setPokemonScreen = false
+let yveltalHead: Sprite = null
+let energyBeam: Sprite = null
 let smallFennekin: Sprite = null
 let smallChespin: Sprite = null
 let smallFroakie: Sprite = null
@@ -458,3 +535,12 @@ scene.setBackgroundImage(img`
     9999999999999666666666666666666666666666667777777769999999999999999999999999999999999999999996666666666666666666666666666677777777699999999999999999999999999999
     `)
 characterSelect()
+game.onUpdate(function () {
+    setYveltalHeadPosition()
+    for (let value of list) {
+    	
+    }
+})
+game.onUpdateInterval(500, function () {
+    energyBeam.vx = 0 - energyBeam.vx
+})
